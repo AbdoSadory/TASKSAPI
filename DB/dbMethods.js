@@ -2,14 +2,14 @@ export const findByIdDocument = async (modelName, docId) => {
   const isDocumentExisted = await modelName.findById({ _id: docId })
   if (!isDocumentExisted) {
     return {
-      message: `No Document is found`,
+      message: `No Document has been found`,
       status: 404,
       success: false,
       result: null,
     }
   }
   return {
-    message: 'Document has been found',
+    message: "Document has been found",
     status: 200,
     success: true,
     result: isDocumentExisted,
@@ -19,7 +19,7 @@ export const findOneDocument = async (modelName, query) => {
   const isDocumentExisted = await modelName.findOne(query)
   if (!isDocumentExisted) {
     return {
-      message: `No Document is found`,
+      message: `No Document has been found`,
       status: 404,
       success: false,
       result: null,
@@ -27,7 +27,7 @@ export const findOneDocument = async (modelName, query) => {
   }
 
   return {
-    message: 'Document has been found',
+    message: "Document has been found",
     status: 200,
     success: true,
     result: isDocumentExisted,
@@ -94,14 +94,14 @@ export const findByIdAndDeleteDocument = async (modelName, docId) => {
   const isDocumentExisted = await modelName.findByIdAndDelete({ _id: docId })
   if (!isDocumentExisted) {
     return {
-      message: `No Document is found`,
+      message: `No Document has been found`,
       status: 404,
       success: false,
       result: null,
     }
   }
   return {
-    message: 'Document has been found',
+    message: "Document has been found",
     status: 204,
     success: true,
     result: null,
@@ -111,14 +111,14 @@ export const findOneAndDeleteDocument = async (modelName, query) => {
   const isDocumentExisted = await modelName.findOneAndDelete(query)
   if (!isDocumentExisted) {
     return {
-      message: `No Document is found`,
+      message: `No Document has been found`,
       status: 404,
       success: false,
       result: null,
     }
   }
   return {
-    message: 'Document has been found',
+    message: "Document has been found",
     status: 204,
     success: true,
     result: null,
