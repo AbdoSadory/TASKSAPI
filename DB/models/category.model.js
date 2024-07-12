@@ -21,6 +21,7 @@ categorySchema.virtual("category_tasks", {
   foreignField: "categoryID",
   localField: "_id",
 })
+
 const CATEGORY = mongoose.model("CATEGORY", categorySchema)
 
 export default CATEGORY

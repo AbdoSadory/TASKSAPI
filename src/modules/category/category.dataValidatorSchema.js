@@ -3,7 +3,7 @@ import { Types } from "mongoose"
 
 const objectIdValidation = (value, helper) => {
   const isValid = Types.ObjectId.isValid(value)
-  return isValid ? value : helper.message("invalid objectId")
+  return isValid ? value : helper.message("Invalid MongoDB ObjectId")
 }
 
 export const getCategorySchema = {

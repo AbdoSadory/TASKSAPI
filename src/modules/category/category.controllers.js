@@ -12,12 +12,12 @@ export const getAllCategories = async (req, res, next) => {
   const { _id } = req.authUser
 
   // 2- Find All categories with this user id
-  const categories = await dbMethods.findDocuments(CATEGORY, { creator: _id })
+  const categories = await CATEGORY.find({ creator: _id }).populate(
+    "category_tasks"
+  )
 
   // 3- Respond with the result
-  res
-    .status(categories.status)
-    .json({ message: categories.message, categories: categories.result })
+  res.status(200).json({ message: "categories", categories })
 }
 
 /**
@@ -32,19 +32,17 @@ export const getCategoryById = async (req, res, next) => {
   const { _id } = req.authUser
 
   // 2- Find category with this user id and category id
-  const getCategory = await dbMethods.findOneDocument(CATEGORY, {
+  const getCategory = await CATEGORY.findOne({
     _id: categoryId,
     creator: _id,
-  })
+  }).populate("category_tasks")
 
   // 3- Check Edge Case
-  if (!getCategory.success)
-    return next(new Error(getCategory.message, { cause: getCategory.status }))
+  if (!getCategory)
+    return next(new Error("No Category has been found", { cause: 404 }))
 
   // 4- Respond with the result
-  res
-    .status(getCategory.status)
-    .json({ message: getCategory.message, category: getCategory.result })
+  res.status(200).json({ message: "category", category: getCategory })
 }
 
 /**

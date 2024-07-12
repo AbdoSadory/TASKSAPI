@@ -1,5 +1,9 @@
 import mongoose from "mongoose"
 
+const validateStringOrArray = function (value) {
+  return typeof value === "string" || Array.isArray(value)
+}
+
 const taskSchema = new mongoose.Schema(
   {
     creator: {
@@ -18,16 +22,21 @@ const taskSchema = new mongoose.Schema(
       enum: ["shared", "private"],
       default: "shared",
     },
-    text: {
-      type: String,
-      trim: true,
-    },
-    items: [
-      {
+    body: {
+      bodyType: {
         type: String,
-        trim: true,
+        required: true,
+        enum: ["text", "list"],
+        default: "text",
       },
-    ],
+      bodyContent: {
+        type: mongoose.Schema.Types.Mixed,
+        validate: [
+          validateStringOrArray,
+          "body Content MUST be String or Array",
+        ],
+      },
+    },
   },
   { timestamps: true }
 )
