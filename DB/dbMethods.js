@@ -101,7 +101,7 @@ export const findByIdAndDeleteDocument = async (modelName, docId) => {
     }
   }
   return {
-    message: "Document has been found",
+    message: "Document has been found and deleted",
     status: 204,
     success: true,
     result: null,
@@ -128,7 +128,7 @@ export const findDocuments = async (modelName, query) => {
   const documents = await modelName.find(query).sort({ createdAt: -1 })
   if (!documents.length) {
     return {
-      message: `No Document has been found`,
+      message: `No Document has been found yet`,
       status: 200,
       success: true,
       result: null,
@@ -139,5 +139,22 @@ export const findDocuments = async (modelName, query) => {
     status: 200,
     success: true,
     result: documents,
+  }
+}
+export const deleteManyDocument = async (modelName, query) => {
+  const deleteDocument = await modelName.deleteMany(query)
+  if (!deleteDocument.acknowledged) {
+    return {
+      message: `No Documents have been deleted`,
+      status: 500,
+      success: false,
+      result: null,
+    }
+  }
+  return {
+    message: `Documents have been deleted`,
+    status: 200,
+    success: true,
+    result: deleteDocument,
   }
 }

@@ -3,6 +3,7 @@ import { config } from "dotenv"
 import db_connection from "./DB/connection.js"
 import userRouter from "./src/modules/user/user.routes.js"
 import globalErrorHandler from "./src/middlewares/globalErrorHandler.js"
+import categoryRouter from "./src/modules/category/category.routes.js"
 
 config()
 db_connection()
@@ -14,6 +15,7 @@ app.get("/", (req, res, next) => {
 })
 
 app.use("/user", userRouter)
+app.use("/category", categoryRouter)
 
 app.use("*", (req, res, next) => {
   next(new Error("Invalid URL"))
