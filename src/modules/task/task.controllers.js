@@ -127,18 +127,21 @@ export const getMyTasks = async (req, res, next) => {
 
 /**
  * 1-   Get task id from params
- * 2-   Get Task by this id and state : "public"
+ * 2-   Get Task by this id and authenticated user id
  * 3-   Respond with the result
  */
 export const getTaskById = async (req, res, next) => {
   // 1-   Get task id from params
   const { taskId } = req.params
-  // 2-   Get Task by this id and state : "public"
+  const { _id } = req.authUser
+  // 2-   Get Task by this id and authenticated user id
   const task = await dbMethods.findOneDocument(TASK, {
     _id: taskId,
+    creator: _id,
   })
   if (!task.success)
     return next(new Error(task.message, { cause: task.status }))
+
   // 3-   Respond with the result
   res.status(task.status).json({ message: task.message, task: task.result })
 }
