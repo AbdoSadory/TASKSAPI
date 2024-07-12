@@ -10,7 +10,7 @@ const taskRouter = Router()
 taskRouter.get("/public/all", expressAsyncHandler(taskControllers.getAllTasks))
 taskRouter.get(
   "/publictask/:taskId",
-  expressAsyncHandler(taskControllers.getSharedTaskById)
+  expressAsyncHandler(taskControllers.getPublicTaskById)
 )
 
 taskRouter.use(authHandler())

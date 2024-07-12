@@ -1,6 +1,7 @@
 import * as dbMethods from "../../../DB/dbMethods.js"
 import CATEGORY from "../../../DB/models/category.model.js"
 import TASK from "../../../DB/models/task.model.js"
+import { APIFeatures } from "../../utils/api-features.js"
 
 /**
  * 1-   Get task data from body and id of the user
@@ -48,27 +49,47 @@ export const createTask = async (req, res, next) => {
 }
 
 /**
- * 1-   Get all shared tasks
+ * 1-   Get page from query
+ * 2-   Get all public tasks paginated
  * 2-   Respond with the result
  */
 export const getAllTasks = async (req, res, next) => {
-  const tasks = await dbMethods.findDocuments(TASK, { state: "shared" })
+  // 1-   Get page from query
+  const { page } = req.query
+  const size = 3
 
-  res.status(tasks.status).json({ message: tasks.message, tasks: tasks.result })
+  const pages = Math.ceil(
+    (await TASK.find({ state: "public" }).countDocuments()) / size
+  )
+
+  //  Get all public tasks paginated
+  const paginationFeature = new APIFeatures(
+    TASK.find({ state: "public" })
+  ).pagination({
+    page,
+    size,
+  })
+
+  const tasks = await paginationFeature.mongooseQuery
+  if (!tasks) return next(new Error("Error while getting Tasks"))
+
+  res
+    .status(200)
+    .json({ message: "tasks", pages, page: page ? page : 1, tasks })
 }
 
 /**
  * 1-   Get task id from params
- * 2-   Get Task by this id and state : "shared"
+ * 2-   Get Task by this id and state : "public"
  * 3-   Respond with the result
  */
-export const getSharedTaskById = async (req, res, next) => {
+export const getPublicTaskById = async (req, res, next) => {
   // 1-   Get task id from params
   const { taskId } = req.params
-  // 2-   Get Task by this id and state : "shared"
+  // 2-   Get Task by this id and state : "public"
   const task = await dbMethods.findOneDocument(TASK, {
     _id: taskId,
-    state: "shared",
+    state: "public",
   })
   if (!task.success)
     return next(new Error(task.message, { cause: task.status }))
@@ -77,27 +98,42 @@ export const getSharedTaskById = async (req, res, next) => {
 }
 
 /**
- * 1-   Get user id from req object
+ * 1-   Get user id from req object and page, sortedBy from query
  * 2-   Get Tasks by this id
  * 3-   Respond with the result
  */
 export const getMyTasks = async (req, res, next) => {
   const { _id } = req.authUser
+  const { page, sortedBy } = req.query
+  const size = 3
 
-  const tasks = await dbMethods.findDocuments(TASK, { creator: _id })
+  const pages = Math.ceil(
+    (await TASK.find({ creator: _id }).countDocuments()) / size
+  )
 
-  res.status(tasks.status).json({ message: tasks.message, tasks: tasks.result })
+  //  Get all public tasks paginated
+  const paginationFeature = new APIFeatures(TASK.find({ creator: _id }))
+    .pagination({
+      page,
+      size,
+    })
+    .sort(sortedBy)
+
+  const tasks = await paginationFeature.mongooseQuery
+  res
+    .status(200)
+    .json({ message: "tasks", pages, page: page ? +page : 1, tasks })
 }
 
 /**
  * 1-   Get task id from params
- * 2-   Get Task by this id and state : "shared"
+ * 2-   Get Task by this id and state : "public"
  * 3-   Respond with the result
  */
 export const getTaskById = async (req, res, next) => {
   // 1-   Get task id from params
   const { taskId } = req.params
-  // 2-   Get Task by this id and state : "shared"
+  // 2-   Get Task by this id and state : "public"
   const task = await dbMethods.findOneDocument(TASK, {
     _id: taskId,
   })

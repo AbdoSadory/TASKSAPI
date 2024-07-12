@@ -16,7 +16,7 @@ export const createTaskSchema = {
   body: joi
     .object({
       categoryID: joi.string().custom(objectIdValidation),
-      state: joi.string().valid("shared", "private").default("shared"),
+      state: joi.string().valid("public", "private").default("public"),
       body: {
         bodyType: joi.string().valid("text", "list").required(),
         bodyContent: joi
@@ -35,7 +35,7 @@ export const updateTaskSchema = {
   body: joi
     .object({
       categoryID: joi.string().custom(objectIdValidation),
-      state: joi.string().valid("shared", "private").default("shared"),
+      state: joi.string().valid("public", "private").default("public"),
       body: {
         bodyType: joi.string().valid("text", "list"),
         bodyContent: joi.alternatives().conditional("bodyType", {

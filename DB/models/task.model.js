@@ -19,8 +19,8 @@ const taskSchema = new mongoose.Schema(
     state: {
       type: String,
       required: true,
-      enum: ["shared", "private"],
-      default: "shared",
+      enum: ["public", "private"],
+      default: "public",
     },
     body: {
       bodyType: {
