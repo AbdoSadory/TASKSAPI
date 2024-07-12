@@ -1,23 +1,38 @@
 import * as dbMethods from "../../../DB/dbMethods.js"
 import CATEGORY from "../../../DB/models/category.model.js"
 import TASK from "../../../DB/models/task.model.js"
-
+import { APIFeatures } from "../../utils/api-features.js"
 /**
- * 1- Get _id from req.authUser
- * 2- Find All categories with this user id
+ * 1- Get _id from req.authUser and page from query
+ * 2- Find All categories with this user id paginated
  * 3- Respond with the result
  */
 export const getAllCategories = async (req, res, next) => {
-  // 1- Get _id from req.authUser
+  // 1- Get _id from req.authUser and page and sortedBy from query
   const { _id } = req.authUser
+  const { page, sortedBy } = req.query
+  const size = 3
 
-  // 2- Find All categories with this user id
-  const categories = await CATEGORY.find({ creator: _id }).populate(
-    "category_tasks"
+  const pages = Math.ceil(
+    (await CATEGORY.find({ creator: _id }).countDocuments()) / size
   )
 
+  // 2- Find All categories with this user id paginated
+  const paginationFeature = new APIFeatures(
+    CATEGORY.find({ creator: _id }).populate("category_tasks")
+  )
+    .pagination({
+      page,
+      size,
+    })
+    .sort(sortedBy)
+
+  const categories = await paginationFeature.mongooseQuery
+  if (!categories) return next(new Error("Error while getting categories "))
   // 3- Respond with the result
-  res.status(200).json({ message: "categories", categories })
+  res
+    .status(200)
+    .json({ message: "categories", pages, page: page ? page : 1, categories })
 }
 
 /**
