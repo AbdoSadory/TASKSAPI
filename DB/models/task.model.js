@@ -16,11 +16,21 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "CATEGORY",
     },
-    state: {
+    shared: {
       type: String,
       required: true,
       enum: ["public", "private"],
       default: "public",
+    },
+    deadline: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["toDo", "doing", "done"],
+      required: true,
+      default: "toDo",
     },
     body: {
       bodyType: {

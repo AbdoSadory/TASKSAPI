@@ -13,7 +13,7 @@ import { APIFeatures } from "../../utils/api-features.js"
  */
 export const createTask = async (req, res, next) => {
   //  1-   Get task data from body and id of the user
-  const { categoryID, state, body } = req.body
+  const { categoryID, shared, body, deadline, status } = req.body
   const { _id } = req.authUser
   //  2-   Create Task Object
   const task = {}
@@ -32,7 +32,9 @@ export const createTask = async (req, res, next) => {
 
     task.categoryID = categoryID
   }
-  state && (task.state = state)
+  shared && (task.shared = shared)
+  deadline && (task.deadline = deadline)
+  status && (task.status = status)
   body && (task.body = body)
 
   // 4-   Create task
@@ -59,12 +61,12 @@ export const getAllTasks = async (req, res, next) => {
   const size = 3
 
   const pages = Math.ceil(
-    (await TASK.find({ state: "public" }).countDocuments()) / size
+    (await TASK.find({ shared: "public" }).countDocuments()) / size
   )
 
   //  Get all public tasks paginated
   const paginationFeature = new APIFeatures(
-    TASK.find({ state: "public" })
+    TASK.find({ shared: "public" })
   ).pagination({
     page,
     size,
@@ -80,16 +82,16 @@ export const getAllTasks = async (req, res, next) => {
 
 /**
  * 1-   Get task id from params
- * 2-   Get Task by this id and state : "public"
+ * 2-   Get Task by this id and shared : "public"
  * 3-   Respond with the result
  */
 export const getPublicTaskById = async (req, res, next) => {
   // 1-   Get task id from params
   const { taskId } = req.params
-  // 2-   Get Task by this id and state : "public"
+  // 2-   Get Task by this id and shared : "public"
   const task = await dbMethods.findOneDocument(TASK, {
     _id: taskId,
-    state: "public",
+    shared: "public",
   })
   if (!task.success)
     return next(new Error(task.message, { cause: task.status }))
@@ -155,7 +157,7 @@ export const getTaskById = async (req, res, next) => {
  */
 export const updateTask = async (req, res, next) => {
   //  1-   Get task data from body, taskId from params and id of the user
-  const { categoryID, state, body } = req.body
+  const { categoryID, shared, body, deadline, status } = req.body
   const { taskId } = req.params
   const { _id } = req.authUser
 
@@ -183,7 +185,9 @@ export const updateTask = async (req, res, next) => {
 
     task.result.categoryID = categoryID
   }
-  state && (task.result.state = state)
+  shared && (task.result.shared = shared)
+  deadline && (task.result.deadline = deadline)
+  status && (task.result.status = status)
   body && (task.result.body = body)
 
   // 4-   Update the task
