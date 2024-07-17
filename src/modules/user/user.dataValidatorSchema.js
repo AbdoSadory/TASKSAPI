@@ -22,3 +22,14 @@ export const loginSchema = {
     })
     .with("username", "password"),
 }
+
+export const updateSchema = {
+  body: joi
+    .object({
+      username: joi.string().trim().min(3),
+      email: joi.string().email().trim(),
+      oldPassword: joi.string().trim().alphanum().min(6),
+      newPassword: joi.string().trim().alphanum().min(6),
+    })
+    .with("oldPassword", "newPassword"),
+}
